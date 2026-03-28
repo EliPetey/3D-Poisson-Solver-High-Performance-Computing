@@ -1,0 +1,95 @@
+#!/bin/bash
+#SBATCH --job-name=poisson-mpi-scale
+#SBATCH --output=poisson-scale-1-%j.out
+#SBATCH --error=poisson-scale-1-%j.err
+#SBATCH --partition=short
+#SBATCH --account=aero_hpc
+#SBATCH --nodes=1
+#SBATCH --ntasks=48
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=128000MB
+#SBATCH --time=00:30:00
+
+# Load Modules
+
+module purge
+
+export OMP_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
+
+cd /home/ysc23/Coursework_ysc23
+
+# Compile code
+
+make clean
+make poisson-mpi
+
+echo "Strong Scaling"
+
+NX=64
+NY=64
+NZ=64
+EPS=1e-1
+
+srun --cpu-bind=cores -n 1 ./poisson-mpi --test 1 --Nx $NX --Ny $NY --Nz $NZ --Px 1 --Py 1 --Pz 1 --epsilon $EPS
+srun --cpu-bind=cores -n 2 ./poisson-mpi --test 1 --Nx $NX --Ny $NY --Nz $NZ --Px 2 --Py 1 --Pz 1 --epsilon $EPS
+srun --cpu-bind=cores -n 4 ./poisson-mpi --test 1 --Nx $NX --Ny $NY --Nz $NZ --Px 2 --Py 2 --Pz 1 --epsilon $EPS
+srun --cpu-bind=cores -n 8 ./poisson-mpi --test 1 --Nx $NX --Ny $NY --Nz $NZ --Px 2 --Py 2 --Pz 2 --epsilon $EPS
+srun --cpu-bind=cores -n 16 ./poisson-mpi --test 1 --Nx $NX --Ny $NY --Nz $NZ --Px 4 --Py 2 --Pz 2 --epsilon $EPS
+srun --cpu-bind=cores -n 24 ./poisson-mpi --test 1 --Nx $NX --Ny $NY --Nz $NZ --Px 4 --Py 3 --Pz 2 --epsilon $EPS
+srun --cpu-bind=cores -n 32 ./poisson-mpi --test 1 --Nx $NX --Ny $NY --Nz $NZ --Px 4 --Py 4 --Pz 2 --epsilon $EPS
+srun --cpu-bind=cores -n 48 ./poisson-mpi --test 1 --Nx $NX --Ny $NY --Nz $NZ --Px 4 --Py 4 --Pz 3 --epsilon $EPS
+
+srun --cpu-bind=cores -n 1 ./poisson-mpi --test 2 --Nx $NX --Ny $NY --Nz $NZ --Px 1 --Py 1 --Pz 1 --epsilon $EPS
+srun --cpu-bind=cores -n 2 ./poisson-mpi --test 2 --Nx $NX --Ny $NY --Nz $NZ --Px 2 --Py 1 --Pz 1 --epsilon $EPS
+srun --cpu-bind=cores -n 4 ./poisson-mpi --test 2 --Nx $NX --Ny $NY --Nz $NZ --Px 2 --Py 2 --Pz 1 --epsilon $EPS
+srun --cpu-bind=cores -n 8 ./poisson-mpi --test 2 --Nx $NX --Ny $NY --Nz $NZ --Px 2 --Py 2 --Pz 2 --epsilon $EPS
+srun --cpu-bind=cores -n 16 ./poisson-mpi --test 2 --Nx $NX --Ny $NY --Nz $NZ --Px 4 --Py 2 --Pz 2 --epsilon $EPS
+srun --cpu-bind=cores -n 24 ./poisson-mpi --test 2 --Nx $NX --Ny $NY --Nz $NZ --Px 4 --Py 3 --Pz 2 --epsilon $EPS
+srun --cpu-bind=cores -n 32 ./poisson-mpi --test 2 --Nx $NX --Ny $NY --Nz $NZ --Px 4 --Py 4 --Pz 2 --epsilon $EPS
+srun --cpu-bind=cores -n 48 ./poisson-mpi --test 2 --Nx $NX --Ny $NY --Nz $NZ --Px 4 --Py 4 --Pz 3 --epsilon $EPS
+
+srun --cpu-bind=cores -n 1 ./poisson-mpi --test 3 --Nx $NX --Ny $NY --Nz $NZ --Px 1 --Py 1 --Pz 1 --epsilon $EPS
+srun --cpu-bind=cores -n 2 ./poisson-mpi --test 3 --Nx $NX --Ny $NY --Nz $NZ --Px 2 --Py 1 --Pz 1 --epsilon $EPS
+srun --cpu-bind=cores -n 4 ./poisson-mpi --test 3 --Nx $NX --Ny $NY --Nz $NZ --Px 2 --Py 2 --Pz 1 --epsilon $EPS
+srun --cpu-bind=cores -n 8 ./poisson-mpi --test 3 --Nx $NX --Ny $NY --Nz $NZ --Px 2 --Py 2 --Pz 2 --epsilon $EPS
+srun --cpu-bind=cores -n 16 ./poisson-mpi --test 3 --Nx $NX --Ny $NY --Nz $NZ --Px 4 --Py 2 --Pz 2 --epsilon $EPS
+srun --cpu-bind=cores -n 24 ./poisson-mpi --test 3 --Nx $NX --Ny $NY --Nz $NZ --Px 4 --Py 3 --Pz 2 --epsilon $EPS
+srun --cpu-bind=cores -n 32 ./poisson-mpi --test 3 --Nx $NX --Ny $NY --Nz $NZ --Px 4 --Py 4 --Pz 2 --epsilon $EPS
+srun --cpu-bind=cores -n 48 ./poisson-mpi --test 3 --Nx $NX --Ny $NY --Nz $NZ --Px 4 --Py 4 --Pz 3 --epsilon $EPS
+
+# ===================
+# Weak Scaling
+# ===================
+echo "Weak Scaling"
+
+EPS=1e-1
+
+srun --cpu-bind=cores -n 1 ./poisson-mpi --test 1 --Nx 32 --Ny 32 --Nz 32 --Px 1 --Py 1 --Pz 1 --epsilon $EPS
+srun --cpu-bind=cores -n 2 ./poisson-mpi --test 1 --Nx 64 --Ny 32 --Nz 32 --Px 2 --Py 1 --Pz 1 --epsilon $EPS
+srun --cpu-bind=cores -n 4 ./poisson-mpi --test 1 --Nx 64 --Ny 64 --Nz 32 --Px 2 --Py 2 --Pz 1 --epsilon $EPS
+srun --cpu-bind=cores -n 8 ./poisson-mpi --test 1 --Nx 64 --Ny 64 --Nz 64 --Px 2 --Py 2 --Pz 2 --epsilon $EPS
+srun --cpu-bind=cores -n 16 ./poisson-mpi --test 1 --Nx 128 --Ny 64 --Nz 64 --Px 4 --Py 2 --Pz 2 --epsilon $EPS
+srun --cpu-bind=cores -n 24 ./poisson-mpi --test 1 --Nx 128 --Ny 96 --Nz 64 --Px 4 --Py 3 --Pz 2 --epsilon $EPS
+srun --cpu-bind=cores -n 32 ./poisson-mpi --test 1 --Nx 128 --Ny 128 --Nz 64 --Px 4 --Py 4 --Pz 2 --epsilon $EPS
+srun --cpu-bind=cores -n 48 ./poisson-mpi --test 1 --Nx 128 --Ny 128 --Nz 96 --Px 4 --Py 4 --Pz 3 --epsilon $EPS
+
+srun --cpu-bind=cores -n 1 ./poisson-mpi --test 2 --Nx 32 --Ny 32 --Nz 32 --Px 1 --Py 1 --Pz 1 --epsilon $EPS
+srun --cpu-bind=cores -n 2 ./poisson-mpi --test 2 --Nx 64 --Ny 32 --Nz 32 --Px 2 --Py 1 --Pz 1 --epsilon $EPS
+srun --cpu-bind=cores -n 4 ./poisson-mpi --test 2 --Nx 64 --Ny 64 --Nz 32 --Px 2 --Py 2 --Pz 1 --epsilon $EPS
+srun --cpu-bind=cores -n 8 ./poisson-mpi --test 2 --Nx 64 --Ny 64 --Nz 64 --Px 2 --Py 2 --Pz 2 --epsilon $EPS
+srun --cpu-bind=cores -n 16 ./poisson-mpi --test 2 --Nx 128 --Ny 64 --Nz 64 --Px 4 --Py 2 --Pz 2 --epsilon $EPS
+srun --cpu-bind=cores -n 24 ./poisson-mpi --test 2 --Nx 128 --Ny 96 --Nz 64 --Px 4 --Py 3 --Pz 2 --epsilon $EPS
+srun --cpu-bind=cores -n 32 ./poisson-mpi --test 2 --Nx 128 --Ny 128 --Nz 64 --Px 4 --Py 4 --Pz 2 --epsilon $EPS
+srun --cpu-bind=cores -n 48 ./poisson-mpi --test 2 --Nx 128 --Ny 128 --Nz 96 --Px 4 --Py 4 --Pz 3 --epsilon $EPS
+
+srun --cpu-bind=cores -n 1 ./poisson-mpi --test 3 --Nx 32 --Ny 32 --Nz 32 --Px 1 --Py 1 --Pz 1 --epsilon $EPS
+srun --cpu-bind=cores -n 2 ./poisson-mpi --test 3 --Nx 64 --Ny 32 --Nz 32 --Px 2 --Py 1 --Pz 1 --epsilon $EPS
+srun --cpu-bind=cores -n 4 ./poisson-mpi --test 3 --Nx 64 --Ny 64 --Nz 32 --Px 2 --Py 2 --Pz 1 --epsilon $EPS
+srun --cpu-bind=cores -n 8 ./poisson-mpi --test 3 --Nx 64 --Ny 64 --Nz 64 --Px 2 --Py 2 --Pz 2 --epsilon $EPS
+srun --cpu-bind=cores -n 16 ./poisson-mpi --test 3 --Nx 128 --Ny 64 --Nz 64 --Px 4 --Py 2 --Pz 2 --epsilon $EPS
+srun --cpu-bind=cores -n 24 ./poisson-mpi --test 3 --Nx 128 --Ny 96 --Nz 64 --Px 4 --Py 3 --Pz 2 --epsilon $EPS
+srun --cpu-bind=cores -n 32 ./poisson-mpi --test 3 --Nx 128 --Ny 128 --Nz 64 --Px 4 --Py 4 --Pz 2 --epsilon $EPS
+srun --cpu-bind=cores -n 48 ./poisson-mpi --test 3 --Nx 128 --Ny 128 --Nz 96 --Px 4 --Py 4 --Pz 3 --epsilon $EPS
+
+echo "Job Complete"

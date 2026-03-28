@@ -1,0 +1,50 @@
+#!/bin/bash
+#SBATCH --job-name=poisson-cuda
+#SBATCH --output=poisson-cuda-%j.out
+#SBATCH --error=poisson-cuda-%j.err
+#SBATCH --partition=gpu-short
+#SBATCH --account=aero_hpc
+#SBATCH --nodes=1
+#SBATCH --ntasks=48
+#SBATCH --cpus-per-task=1
+#SBATCH --gres=gpu:1
+#SBATCH --time=00:05:00
+
+set -e
+
+module purge
+module load cuda
+
+cd /home/ysc23/Coursework_ysc23
+
+make clean
+make poisson-cuda
+
+nvidia-smi
+
+mpirun -np 1 ./poisson-cuda --test 1 --Nx 64 --Ny 64 --Nz 64 --Px 1 --Py 1 --Pz 1 --epsilon 1e-1
+mpirun -np 2 ./poisson-cuda --test 1 --Nx 64 --Ny 64 --Nz 64 --Px 2 --Py 1 --Pz 1 --epsilon 1e-1
+mpirun -np 4 ./poisson-cuda --test 1 --Nx 64 --Ny 64 --Nz 64 --Px 2 --Py 2 --Pz 1 --epsilon 1e-1
+mpirun -np 8 ./poisson-cuda --test 1 --Nx 64 --Ny 64 --Nz 64 --Px 2 --Py 2 --Pz 2 --epsilon 1e-1
+mpirun -np 16 ./poisson-cuda --test 1 --Nx 64 --Ny 64 --Nz 64 --Px 4 --Py 2 --Pz 2 --epsilon 1e-1
+mpirun -np 24 ./poisson-cuda --test 1 --Nx 64 --Ny 64 --Nz 64 --Px 4 --Py 3 --Pz 2 --epsilon 1e-1
+mpirun -np 32 ./poisson-cuda --test 1 --Nx 64 --Ny 64 --Nz 64 --Px 4 --Py 4 --Pz 2 --epsilon 1e-1
+mpirun -np 48 ./poisson-cuda --test 1 --Nx 64 --Ny 64 --Nz 64 --Px 4 --Py 4 --Pz 3 --epsilon 1e-1
+
+mpirun -np 1 ./poisson-cuda --test 2 --Nx 64 --Ny 64 --Nz 64 --Px 1 --Py 1 --Pz 1 --epsilon 1e-1
+mpirun -np 2 ./poisson-cuda --test 2 --Nx 64 --Ny 64 --Nz 64 --Px 2 --Py 1 --Pz 1 --epsilon 1e-1
+mpirun -np 4 ./poisson-cuda --test 2 --Nx 64 --Ny 64 --Nz 64 --Px 2 --Py 2 --Pz 1 --epsilon 1e-1
+mpirun -np 8 ./poisson-cuda --test 2 --Nx 64 --Ny 64 --Nz 64 --Px 2 --Py 2 --Pz 2 --epsilon 1e-1
+mpirun -np 16 ./poisson-cuda --test 2 --Nx 64 --Ny 64 --Nz 64 --Px 4 --Py 2 --Pz 2 --epsilon 1e-1
+mpirun -np 24 ./poisson-cuda --test 2 --Nx 64 --Ny 64 --Nz 64 --Px 4 --Py 3 --Pz 2 --epsilon 1e-1
+mpirun -np 32 ./poisson-cuda --test 2 --Nx 64 --Ny 64 --Nz 64 --Px 4 --Py 4 --Pz 2 --epsilon 1e-1
+mpirun -np 48 ./poisson-cuda --test 2 --Nx 64 --Ny 64 --Nz 64 --Px 4 --Py 4 --Pz 3 --epsilon 1e-1
+
+mpirun -np 1 ./poisson-cuda --test 3 --Nx 64 --Ny 64 --Nz 64 --Px 1 --Py 1 --Pz 1 --epsilon 1e-1
+mpirun -np 2 ./poisson-cuda --test 3 --Nx 64 --Ny 64 --Nz 64 --Px 2 --Py 1 --Pz 1 --epsilon 1e-1
+mpirun -np 4 ./poisson-cuda --test 3 --Nx 64 --Ny 64 --Nz 64 --Px 2 --Py 2 --Pz 1 --epsilon 1e-1
+mpirun -np 8 ./poisson-cuda --test 3 --Nx 64 --Ny 64 --Nz 64 --Px 2 --Py 2 --Pz 2 --epsilon 1e-1
+mpirun -np 16 ./poisson-cuda --test 3 --Nx 64 --Ny 64 --Nz 64 --Px 4 --Py 2 --Pz 2 --epsilon 1e-1
+mpirun -np 24 ./poisson-cuda --test 3 --Nx 64 --Ny 64 --Nz 64 --Px 4 --Py 3 --Pz 2 --epsilon 1e-1
+mpirun -np 32 ./poisson-cuda --test 3 --Nx 64 --Ny 64 --Nz 64 --Px 4 --Py 4 --Pz 2 --epsilon 1e-1
+mpirun -np 48 ./poisson-cuda --test 3 --Nx 64 --Ny 64 --Nz 64 --Px 4 --Py 4 --Pz 3 --epsilon 1e-1
