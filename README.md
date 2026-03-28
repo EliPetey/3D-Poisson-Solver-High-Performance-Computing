@@ -1,6 +1,6 @@
-# 3D Poisson Solver (HPC Coursework 2025-2026)
+# 3D Poisson Solver
 
-This project is prepared by Yanson Cheng CID: 02455217 Shortcode: ysc23 for the 2025-2026 AERO70011 High Performance Computing course. 
+This project is prepared by Yanson Cheng.
 
 This project implements a high performance solver for the 3D Poisson equation using the Jacobi Iterative method. The solver is developed in C++ and includes:
 
